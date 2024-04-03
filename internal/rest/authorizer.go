@@ -5,14 +5,22 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"os"
 )
 
 type AuthorizerResponse struct {
 	Authorization bool `json:"authorization"`
 }
 
+var (
+	authorizationURL = os.Getenv("AUTHORIZER_HOST")
+)
+
 func Authorizer() error {
-	resp, err := http.Get("http://localhost:8099/authorization")
+	if authorizationURL == "" {
+		authorizationURL = "localhost"
+	}
+	resp, err := http.Get("http://" + authorizationURL + ":8099/authorization")
 
 	if err != nil {
 		return fmt.Errorf("authorizer call err")

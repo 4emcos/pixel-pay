@@ -2,8 +2,12 @@ version: "3.5"
 
 services:
   api01: &api
-    image: .
+    image: ghcr.io/4emcos/pixel-pay:latest
     hostname: api01
+    environment:
+        - DB_HOST=db
+        - AUTHORIZER_HOST=auth_notification
+        - NOTIFICATION_HOST=auth_notification
     depends_on:
       - db
     deploy:
@@ -15,6 +19,17 @@ services:
   api02:
     <<: *api
     hostname: api02
+
+  auth_notification:
+    image: ghcr.io/4emcos/pixel-pay-authorizer-notification:latest
+    hostname: auth_notification
+    ports:
+      - "8099:8099"
+    deploy:
+      resources:
+        limits:
+          cpus: "0.1"
+          memory: "20MB"
 
   nginx:
     image: nginx:latest
@@ -47,4 +62,3 @@ services:
         limits:
           cpus: "0.56"
           memory: "410MB"
-

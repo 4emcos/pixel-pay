@@ -5,14 +5,22 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"os"
 )
 
 type NotificationResponse struct {
 	Notification bool `json:"notification"`
 }
 
+var (
+	notificationUrl = os.Getenv("NOTIFICATION_HOST")
+)
+
 func Notification() error {
-	resp, err := http.Get("http://localhost:8099/notification")
+	if notificationUrl == "" {
+		notificationUrl = "localhost"
+	}
+	resp, err := http.Get("http://" + notificationUrl + ":8099/notification")
 
 	if err != nil {
 		return fmt.Errorf("err call notification")
